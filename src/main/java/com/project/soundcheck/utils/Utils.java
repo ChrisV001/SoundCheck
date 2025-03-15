@@ -8,6 +8,8 @@ import com.project.soundcheck.model.Article;
 import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.model.ExhaustSystem;
 import com.project.soundcheck.model.Review;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -60,5 +62,9 @@ public class Utils {
         );
 
         return carModelDTO;
+    }
+
+    public static List<ArticleDTO> mapArticleListToArticleDTOList(List<Article> articles) {
+        return articles.stream().map(Utils::mapArticleToArticleDTO).collect(Collectors.toList());
     }
 }
