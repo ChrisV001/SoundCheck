@@ -21,6 +21,7 @@ public class Utils {
         articleDTO.setContent(article.getContent());
         articleDTO.setTitle(article.getTitle());
         articleDTO.setPublishedAt(article.getPublishedAt());
+        articleDTO.setCarModelDTO(Utils.mapCarModelToCarModelDTO(article.getCarModel()));
 
         return articleDTO;
     }

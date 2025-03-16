@@ -16,4 +16,6 @@ public class ArticleDTO {
     private String content;
 
     private LocalDateTime publishedAt;
+
+    private CarModelDTO carModelDTO;
 }

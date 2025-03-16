@@ -23,4 +23,8 @@ public class Article {
     private String content;
 
     private LocalDateTime publishedAt = LocalDateTime.now();
+
+    @ManyToOne
+    @JoinColumn(name = "car_model_id")
+    private CarModel carModel;
 }
