@@ -68,4 +68,12 @@ public class Utils {
     public static List<ArticleDTO> mapArticleListToArticleDTOList(List<Article> articles) {
         return articles.stream().map(Utils::mapArticleToArticleDTO).collect(Collectors.toList());
     }
+
+    public static List<CarModelDTO> mapCarModelListToCarModelDTOList(List<CarModel> carModels) {
+        return carModels.stream().map(Utils::mapCarModelToCarModelDTO).collect(Collectors.toList());
+    }
+
+    public static List<ExhaustSystemDTO> mapExhaustSystemListToExhaustSystemDTOList(List<ExhaustSystem> exhaustSystems) {
+        return exhaustSystems.stream().map(Utils::mapExhaustSystemToExhaustSystemDTO).collect(Collectors.toList());
+    }
 }
