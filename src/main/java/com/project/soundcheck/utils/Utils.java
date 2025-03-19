@@ -1,13 +1,7 @@
 package com.project.soundcheck.utils;
 
-import com.project.soundcheck.dto.ArticleDTO;
-import com.project.soundcheck.dto.CarModelDTO;
-import com.project.soundcheck.dto.ExhaustSystemDTO;
-import com.project.soundcheck.dto.ReviewDTO;
-import com.project.soundcheck.model.Article;
-import com.project.soundcheck.model.CarModel;
-import com.project.soundcheck.model.ExhaustSystem;
-import com.project.soundcheck.model.Review;
+import com.project.soundcheck.dto.*;
+import com.project.soundcheck.model.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +26,24 @@ public class Utils {
         reviewDTO.setId(review.getId());
         reviewDTO.setCreatedAt(review.getCreatedAt());
         reviewDTO.setExhaustSystem(review.getExhaustSystem());
+        reviewDTO.setUserDTO(Utils.mapUserToUserDTO(review.getUser()));
 
         return reviewDTO;
+    }
+
+    public static UserDTO mapUserToUserDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setPassword(user.getPassword());
+        userDTO.setRole(user.getRole());
+        userDTO.setCreatedAt(user.getCreatedAt());
+        userDTO.setUpdatedAt(user.getUpdatedAt());
+        userDTO.setReviews(user.getReviews().stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toSet()));
+
+        return userDTO;
     }
 
     public static ExhaustSystemDTO mapExhaustSystemToExhaustSystemDTO(ExhaustSystem exhaustSystem) {
@@ -75,5 +85,13 @@ public class Utils {
 
     public static List<ExhaustSystemDTO> mapExhaustSystemListToExhaustSystemDTOList(List<ExhaustSystem> exhaustSystems) {
         return exhaustSystems.stream().map(Utils::mapExhaustSystemToExhaustSystemDTO).collect(Collectors.toList());
+    }
+
+    public static List<ReviewDTO> mapReviewListToReviewDTOList(List<Review> reviews) {
+        return reviews.stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toList());
+    }
+
+    public static List<UserDTO> mapUserListToUserDTOList(List<User> users) {
+        return users.stream().map(Utils::mapUserToUserDTO).collect(Collectors.toList());
     }
 }
