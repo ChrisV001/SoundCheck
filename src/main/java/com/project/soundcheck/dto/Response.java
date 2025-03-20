@@ -27,6 +27,8 @@ public class Response {
 
     private ReviewDTO reviewDTO;
 
+    private UserDTO userDTO;
+
     private List<ArticleDTO> articleList;
 
     private List<CarModelDTO> carModelList;
@@ -34,4 +36,6 @@ public class Response {
     private List<ExhaustSystemDTO> exhaustSystemList;
 
     private List<ReviewDTO> reviewList;
+
+    private List<UserDTO> userList;
 }
