@@ -13,7 +13,7 @@ public class ReviewDTO {
 
     private Long id;
 
-    private ExhaustSystem exhaustSystem;
+    private ExhaustSystemDTO exhaustSystem;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 

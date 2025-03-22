@@ -25,7 +25,7 @@ public class Utils {
 
         reviewDTO.setId(review.getId());
         reviewDTO.setCreatedAt(review.getCreatedAt());
-        reviewDTO.setExhaustSystem(review.getExhaustSystem());
+        reviewDTO.setExhaustSystem(Utils.mapExhaustSystemToExhaustSystemDTO(review.getExhaustSystem()));
         reviewDTO.setUserDTO(Utils.mapUserToUserDTO(review.getUser()));
 
         return reviewDTO;

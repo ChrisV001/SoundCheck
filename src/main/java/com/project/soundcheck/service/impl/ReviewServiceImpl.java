@@ -1,12 +1,16 @@
 package com.project.soundcheck.service.impl;
 
+import com.project.soundcheck.dto.ExhaustSystemDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.dto.ReviewDTO;
+import com.project.soundcheck.dto.UserDTO;
 import com.project.soundcheck.exceptions.CustomException;
 import com.project.soundcheck.model.ExhaustSystem;
 import com.project.soundcheck.model.Review;
 import com.project.soundcheck.model.User;
+import com.project.soundcheck.repo.ExhaustSystemRepository;
 import com.project.soundcheck.repo.ReviewRepository;
+import com.project.soundcheck.repo.UserRepository;
 import com.project.soundcheck.service.ReviewService;
 import com.project.soundcheck.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -21,6 +25,10 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
+
+    private final ExhaustSystemRepository exhaustSystemRepository;
+
+    private final UserRepository userRepository;
 
     @Override
     public Response getReviewByExhaustSystemId(Long exhaustId) {
@@ -45,20 +53,26 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Response createReview(ExhaustSystem exhaustSystem, LocalDateTime createdAt, User user) {
+    public Response createReview(ReviewDTO reviewDTO) {
         Response response = new Response();
 
         try {
             Review review = new Review();
 
-            review.setExhaustSystem(exhaustSystem);
-            review.setCreatedAt(createdAt);
+            ExhaustSystem exhaustSystem = exhaustSystemRepository.findById(reviewDTO.getExhaustSystem().getId())
+                    .orElseThrow(() -> new CustomException("Exhaust System not found"));
+
+            User user = userRepository.findById(reviewDTO.getUserDTO().getId())
+                    .orElseThrow(() -> new CustomException("User not found"));
+
             review.setUser(user);
+            review.setCreatedAt(reviewDTO.getCreatedAt());
+            review.setExhaustSystem(exhaustSystem);
 
-            Review newReview = reviewRepository.save(review);
-            ReviewDTO reviewDTO = Utils.mapReviewToReviewDTO(newReview);
+            Review savedReview = reviewRepository.save(review);
+            ReviewDTO savedReviewDTO = Utils.mapReviewToReviewDTO(savedReview);
 
-            response.setReviewDTO(reviewDTO);
+            response.setReviewDTO(savedReviewDTO);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {
@@ -72,26 +86,32 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Response updateReview(Long id, ExhaustSystem exhaustSystem, LocalDateTime createdAt, User user) {
+    public Response updateReview(Long id, ReviewDTO reviewDTO) {
         Response response = new Response();
 
         try {
             Review review = reviewRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Review not found."));
 
-            if (exhaustSystem != null)
+            if (reviewDTO.getExhaustSystem().getId() != null) {
+                ExhaustSystem exhaustSystem = exhaustSystemRepository.findById(reviewDTO.getExhaustSystem().getId())
+                        .orElseThrow(() -> new CustomException("Exhaust System not found"));
                 review.setExhaustSystem(exhaustSystem);
+            }
 
-            if (createdAt != null)
-                review.setCreatedAt(createdAt);
-
-            if (user != null)
+            if (reviewDTO.getUserDTO().getId() != null) {
+                User user = userRepository.findById(reviewDTO.getUserDTO().getId())
+                        .orElseThrow(() -> new CustomException("User not found"));
                 review.setUser(user);
+            }
 
-            Review updatedReview = reviewRepository.save(review);
-            ReviewDTO reviewDTO = Utils.mapReviewToReviewDTO(updatedReview);
+            if (reviewDTO.getCreatedAt() != null)
+                review.setCreatedAt(reviewDTO.getCreatedAt());
 
-            response.setReviewDTO(reviewDTO);
+            Review savedReview = reviewRepository.save(review);
+            ReviewDTO updatedReviewDTO = Utils.mapReviewToReviewDTO(savedReview);
+
+            response.setReviewDTO(updatedReviewDTO);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {
