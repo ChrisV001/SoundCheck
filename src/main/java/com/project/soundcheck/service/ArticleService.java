@@ -1,5 +1,6 @@
 package com.project.soundcheck.service;
 
+import com.project.soundcheck.dto.ArticleDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.model.Article;
 
@@ -10,9 +11,9 @@ public interface ArticleService {
 
     Response getArticleById(Long id);
 
-    Response createArticle(String title, String content, LocalDateTime publishedAt);
+    Response createArticle(ArticleDTO articleDTO);
 
-    Response updateArticle(Long id, String title, String content, LocalDateTime publishedAt);
+    Response updateArticle(Long id, ArticleDTO articleDTO);
 
     Response deleteArticle(Long articleId);
 

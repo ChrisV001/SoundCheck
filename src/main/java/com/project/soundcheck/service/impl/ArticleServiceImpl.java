@@ -4,7 +4,9 @@ import com.project.soundcheck.dto.ArticleDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.exceptions.CustomException;
 import com.project.soundcheck.model.Article;
+import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.repo.ArticleRepository;
+import com.project.soundcheck.repo.CarModelRepository;
 import com.project.soundcheck.service.ArticleService;
 import com.project.soundcheck.utils.Utils;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
+
+    private final CarModelRepository carModelRepository;
 
     @Override
     public Response getAllArticles() {
@@ -66,22 +70,26 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Response createArticle(String title, String content, LocalDateTime publishedAt) {
+    public Response createArticle(ArticleDTO articleDTO) {
         Response response = new Response();
 
         try {
             Article article = new Article();
 
-            article.setTitle(title);
-            article.setContent(content);
-            article.setPublishedAt(publishedAt);
+            CarModel carModel = carModelRepository.findById(articleDTO.getCarModelDTO().getId())
+                            .orElseThrow(() -> new CustomException("Car Model not found"));
+
+            article.setTitle(articleDTO.getTitle());
+            article.setContent(articleDTO.getContent());
+            article.setPublishedAt(articleDTO.getPublishedAt());
+            article.setCarModel(carModel);
 
             Article savedArticle = articleRepository.save(article);
-            ArticleDTO articleDTO = Utils.mapArticleToArticleDTO(savedArticle);
+            ArticleDTO updatedArticleDTO = Utils.mapArticleToArticleDTO(savedArticle);
 
             response.setStatusCode(200);
             response.setMessage("Successful");
-            response.setArticleDTO(articleDTO);
+            response.setArticleDTO(updatedArticleDTO);
         } catch (CustomException e) {
             response.setStatusCode(404);
             response.setMessage(e.getMessage());
@@ -94,28 +102,31 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Response updateArticle(Long id, String title, String content, LocalDateTime publishedAt) {
+    public Response updateArticle(Long id, ArticleDTO articleDTO) {
         Response response = new Response();
 
         try {
             Article article = articleRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Article not found."));
 
-            if (title != null)
-                article.setTitle(title);
+            CarModel carModel = carModelRepository.findById(id)
+                    .orElseThrow(() -> new CustomException("Car Model not found"));
 
-            if (content != null)
-                article.setContent(content);
+            if (articleDTO.getTitle() != null)
+                article.setTitle(articleDTO.getTitle());
 
-            if (publishedAt != null)
-                article.setPublishedAt(publishedAt);
+            if (articleDTO.getContent() != null)
+                article.setContent(articleDTO.getContent());
+
+            if (articleDTO.getPublishedAt() != null)
+                article.setPublishedAt(articleDTO.getPublishedAt());
 
             Article savedArticle = articleRepository.save(article);
-            ArticleDTO articleDTO = Utils.mapArticleToArticleDTO(savedArticle);
+            ArticleDTO updatedArticleDTO = Utils.mapArticleToArticleDTO(savedArticle);
 
             response.setStatusCode(200);
             response.setMessage("Successful");
-            response.setArticleDTO(articleDTO);
+            response.setArticleDTO(updatedArticleDTO);
         } catch (CustomException e) {
             response.setStatusCode(404);
             response.setMessage(e.getMessage());

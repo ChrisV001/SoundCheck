@@ -9,13 +9,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "users")
 @AllArgsConstructor
 public class User implements UserDetails {
 
@@ -38,8 +37,8 @@ public class User implements UserDetails {
 
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<Review> reviews;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
