@@ -1,5 +1,6 @@
 package com.project.soundcheck.controller;
 
+import com.project.soundcheck.dto.ExhaustSystemDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.model.ExhaustSystem;
@@ -35,13 +36,7 @@ public class ExhaustSystemController {
 
     @PostMapping("/add")
     public ResponseEntity<Response> createExhaustSystem(
-            @RequestParam String name,
-            @RequestParam String type,
-            @RequestParam String material,
-            @RequestParam String soundProfile,
-            @RequestParam String performanceMetrics,
-            @RequestBody(required = false) Set<CarModel> carModels,
-            @RequestBody(required = false) List<Review> reviews
+            @RequestBody ExhaustSystemDTO exhaustSystemDTO
     ) {
         Response response = exhaustSystemService.createExhaustSystem(name, type, material, soundProfile, performanceMetrics, carModels, reviews);
         return ResponseEntity.status(response.getStatusCode())
