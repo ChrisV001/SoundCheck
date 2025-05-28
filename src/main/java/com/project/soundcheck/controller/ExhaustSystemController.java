@@ -46,15 +46,9 @@ public class ExhaustSystemController {
     @PutMapping("/{id}")
     public ResponseEntity<Response> updateExhaustSystem(
             @PathVariable Long id,
-            @RequestParam String name,
-            @RequestParam String type,
-            @RequestParam String material,
-            @RequestParam String soundProfile,
-            @RequestParam String performanceMetrics,
-            @RequestBody(required = false) Set<CarModel> carModels,
-            @RequestBody(required = false) List<Review> reviews
+            @RequestBody ExhaustSystemDTO exhaustSystemDTO
     ) {
-        Response response = exhaustSystemService.updateExhaustSystem(id, name, type, material, soundProfile, performanceMetrics, carModels, reviews);
+        Response response = exhaustSystemService.updateExhaustSystem(id, exhaustSystemDTO);
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }

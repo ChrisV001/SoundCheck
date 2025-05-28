@@ -16,7 +16,7 @@ public interface ExhaustSystemService {
 
     Response createExhaustSystem(ExhaustSystemDTO exhaustSystemDTO);
 
-    Response updateExhaustSystem(Long id, String name, String type, String material, String soundProfile, String performanceMetrics, Set<CarModel> carModels, List<Review> reviews);
+    Response updateExhaustSystem(Long id, ExhaustSystemDTO exhaustSystemDTO);
 
     Response deleteExhaustSystem(Long id);
 

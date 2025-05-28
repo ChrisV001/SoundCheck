@@ -99,37 +99,41 @@ public class ExhaustSystemServiceImpl implements ExhaustSystemService {
     }
 
     @Override
-    public Response updateExhaustSystem(Long id, String name, String type, String material, String soundProfile, String performanceMetrics, Set<CarModel> carModels, List<Review> reviews) {
+    public Response updateExhaustSystem(Long id, ExhaustSystemDTO exhaustSystemDTO) {
         Response response = new Response();
 
         try {
             ExhaustSystem exhaustSystem = exhaustSystemRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Exhaust system not found"));
 
-            if (name != null)
-                exhaustSystem.setName(name);
+            if (exhaustSystemDTO.getId() != null)
+                exhaustSystem.setId(exhaustSystemDTO.getId());
 
-            if (type != null)
-                exhaustSystem.setType(type);
+            if (exhaustSystemDTO.getName() != null)
+                exhaustSystem.setName(exhaustSystemDTO.getName());
 
-            if (material != null)
-                exhaustSystem.setMaterial(material);
+            if (exhaustSystemDTO.getType() != null)
+                exhaustSystem.setType(exhaustSystemDTO.getType());
 
-            if (soundProfile != null)
-                exhaustSystem.setSoundProfile(soundProfile);
+            if (exhaustSystemDTO.getMaterial() != null)
+                exhaustSystem.setMaterial(exhaustSystemDTO.getMaterial());
 
-            if (performanceMetrics != null)
-                exhaustSystem.setPerformanceMetrics(performanceMetrics);
+            if (exhaustSystemDTO.getSoundProfile() != null)
+                exhaustSystem.setSoundProfile(exhaustSystemDTO.getSoundProfile());
 
-            if (carModels != null)
-                exhaustSystem.setCarModels(carModels);
+            if (exhaustSystemDTO.getPerformanceMetrics() != null)
+                exhaustSystem.setPerformanceMetrics(exhaustSystemDTO.getPerformanceMetrics());
 
-            if (reviews != null)
-                exhaustSystem.setReviews(reviews);
+            if (exhaustSystemDTO.getCarModels() != null)
+                exhaustSystem.setCarModels(exhaustSystem.getCarModels());
+
+            //TODO: Error fetch for null value
+            if (exhaustSystemDTO.getReviews() != null)
+                exhaustSystem.setReviews(Utils.mapReviewDTOListToReviewList(exhaustSystemDTO.getReviews()));
 
             ExhaustSystem savedExhaustSystem = exhaustSystemRepository.save(exhaustSystem);
 
-            ExhaustSystemDTO exhaustSystemDTO = Utils.mapExhaustSystemToExhaustSystemDTO(savedExhaustSystem);
+            ExhaustSystemDTO exhaustSystemDTOSaved = Utils.mapExhaustSystemToExhaustSystemDTO(savedExhaustSystem);
 
             response.setExhaustSystemDTO(exhaustSystemDTO);
             response.setStatusCode(200);
