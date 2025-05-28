@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/exhaustsystem")
+@RequestMapping("/exhaustsystems")
 @RequiredArgsConstructor
 public class ExhaustSystemController {
 
@@ -38,7 +38,7 @@ public class ExhaustSystemController {
     public ResponseEntity<Response> createExhaustSystem(
             @RequestBody ExhaustSystemDTO exhaustSystemDTO
     ) {
-        Response response = exhaustSystemService.createExhaustSystem(name, type, material, soundProfile, performanceMetrics, carModels, reviews);
+        Response response = exhaustSystemService.createExhaustSystem(exhaustSystemDTO);
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }

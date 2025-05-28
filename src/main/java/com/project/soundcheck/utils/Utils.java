@@ -3,7 +3,10 @@ package com.project.soundcheck.utils;
 import com.project.soundcheck.dto.*;
 import com.project.soundcheck.model.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -20,6 +23,18 @@ public class Utils {
         return articleDTO;
     }
 
+    public static Article mapArticleDTOtoArticle(ArticleDTO articleDTO) {
+        Article article = new Article();
+
+        article.setId(articleDTO.getId());
+        article.setContent(articleDTO.getContent());
+        article.setTitle(articleDTO.getTitle());
+        article.setPublishedAt(articleDTO.getPublishedAt());
+        article.setCarModel(Utils.mapCarModelDTOToCarModel(articleDTO.getCarModelDTO()));
+
+        return article;
+    }
+
     public static ReviewDTO mapReviewToReviewDTO(Review review) {
         ReviewDTO reviewDTO = new ReviewDTO();
 
@@ -29,6 +44,17 @@ public class Utils {
         reviewDTO.setUserDTO(Utils.mapUserToUserDTO(review.getUser()));
 
         return reviewDTO;
+    }
+
+    public static Review mapReviewDTOToReview(ReviewDTO reviewDTO) {
+        Review review = new Review();
+
+        review.setId(reviewDTO.getId());
+        review.setCreatedAt(reviewDTO.getCreatedAt());
+        review.setExhaustSystem(Utils.mapExhaustSystemDTOToExhaustSystem(reviewDTO.getExhaustSystem()));
+        review.setUser(Utils.mapUserDTOToUser(reviewDTO.getUserDTO()));
+
+        return review;
     }
 
     public static UserDTO mapUserToUserDTO(User user) {
@@ -41,9 +67,24 @@ public class Utils {
         userDTO.setRole(user.getRole());
         userDTO.setCreatedAt(user.getCreatedAt());
         userDTO.setUpdatedAt(user.getUpdatedAt());
-        userDTO.setReviews(user.getReviews().stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toSet()));
+        userDTO.setReviews(user.getReviews() != null ? user.getReviews().stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toSet()) : Collections.emptySet());
 
         return userDTO;
+    }
+
+    public static User mapUserDTOToUser(UserDTO userDTO) {
+        User user = new User();
+
+        user.setId(userDTO.getId());
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setRole(userDTO.getRole());
+        user.setCreatedAt(userDTO.getCreatedAt());
+        user.setUpdatedAt(userDTO.getUpdatedAt());
+        user.setReviews(userDTO.getReviews() != null ? userDTO.getReviews().stream().map(Utils::mapReviewDTOToReview).collect(Collectors.toSet()) : Collections.emptySet());
+
+        return user;
     }
 
     public static ExhaustSystemDTO mapExhaustSystemToExhaustSystemDTO(ExhaustSystem exhaustSystem) {
@@ -51,7 +92,7 @@ public class Utils {
 
         exhaustSystemDTO.setId(exhaustSystem.getId());
         exhaustSystemDTO.setName(exhaustSystem.getName());
-        exhaustSystemDTO.setReviews(exhaustSystem.getReviews().stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toList()));
+        exhaustSystemDTO.setReviews(exhaustSystem.getReviews() != null ? exhaustSystem.getReviews().stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toList()) : Collections.emptyList());
         exhaustSystemDTO.setType(exhaustSystem.getType());
         exhaustSystemDTO.setMaterial(exhaustSystem.getMaterial());
         exhaustSystemDTO.setCarModels(exhaustSystem.getCarModels().stream().map(Utils::mapCarModelToCarModelDTO).collect(Collectors.toSet()));
@@ -61,6 +102,21 @@ public class Utils {
         return exhaustSystemDTO;
     }
 
+    public static ExhaustSystem mapExhaustSystemDTOToExhaustSystem(ExhaustSystemDTO exhaustSystemDTO) {
+        ExhaustSystem exhaustSystem = new ExhaustSystem();
+
+        exhaustSystem.setId(exhaustSystemDTO.getId());
+        exhaustSystem.setName(exhaustSystemDTO.getName());
+        exhaustSystem.setReviews(exhaustSystemDTO.getReviews() != null ? exhaustSystemDTO.getReviews().stream().map(Utils::mapReviewDTOToReview).collect(Collectors.toList()) : Collections.emptyList());
+        exhaustSystem.setType(exhaustSystemDTO.getType());
+        exhaustSystem.setMaterial(exhaustSystemDTO.getMaterial());
+        exhaustSystem.setCarModels(exhaustSystemDTO.getCarModels().stream().map(Utils::mapCarModelDTOToCarModel).collect(Collectors.toSet()));
+        exhaustSystem.setPerformanceMetrics(exhaustSystemDTO.getPerformanceMetrics());
+        exhaustSystem.setSoundProfile(exhaustSystemDTO.getSoundProfile());
+
+        return exhaustSystem;
+    }
+
     public static CarModelDTO mapCarModelToCarModelDTO(CarModel carModel) {
         CarModelDTO carModelDTO = new CarModelDTO();
 
@@ -68,11 +124,21 @@ public class Utils {
         carModelDTO.setModel(carModel.getModel());
         carModelDTO.setYear(carModel.getYear());
         carModelDTO.setEngineType(carModel.getEngineType());
-        carModelDTO.setExhaustSystems(
-            carModel.getExhaustSystems().stream().map(Utils::mapExhaustSystemToExhaustSystemDTO).collect(Collectors.toSet())
-        );
+        carModelDTO.setExhaustSystems(carModel.getExhaustSystems() != null ? carModel.getExhaustSystems().stream().map(Utils::mapExhaustSystemToExhaustSystemDTO).collect(Collectors.toSet()) : Collections.emptySet());
 
         return carModelDTO;
+    }
+
+    public static CarModel mapCarModelDTOToCarModel(CarModelDTO carModelDTO) {
+        CarModel carModel = new CarModel();
+
+        carModel.setId(carModelDTO.getId());
+        carModel.setModel(carModelDTO.getModel());
+        carModel.setYear(carModelDTO.getYear());
+        carModel.setEngineType(carModelDTO.getEngineType());
+        carModel.setExhaustSystems(carModelDTO.getExhaustSystems() != null ? carModelDTO.getExhaustSystems().stream().map(Utils::mapExhaustSystemDTOToExhaustSystem).collect(Collectors.toSet()) : Collections.emptySet());
+
+        return carModel;
     }
 
     public static List<ArticleDTO> mapArticleListToArticleDTOList(List<Article> articles) {
@@ -93,5 +159,13 @@ public class Utils {
 
     public static List<UserDTO> mapUserListToUserDTOList(List<User> users) {
         return users.stream().map(Utils::mapUserToUserDTO).collect(Collectors.toList());
+    }
+
+    public static Set<CarModel> mapCarModelSetToCarModelDTOSet(Set<CarModelDTO> carModelDTOS) {
+        return carModelDTOS.stream().map(Utils::mapCarModelDTOToCarModel).collect(Collectors.toSet());
+    }
+
+    public static List<Review> mapReviewDTOListToReviewList(List<ReviewDTO> reviewDTOS) {
+        return reviewDTOS.stream().map(Utils::mapReviewDTOToReview).collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package com.project.soundcheck.service;
 
+import com.project.soundcheck.dto.ExhaustSystemDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.model.Review;
@@ -13,7 +14,7 @@ public interface ExhaustSystemService {
 
     Response getExhaustSystemById(Long id);
 
-    Response createExhaustSystem(String name, String type, String material, String soundProfile, String performanceMetrics, Set<CarModel> carModels, List<Review> reviews);
+    Response createExhaustSystem(ExhaustSystemDTO exhaustSystemDTO);
 
     Response updateExhaustSystem(Long id, String name, String type, String material, String soundProfile, String performanceMetrics, Set<CarModel> carModels, List<Review> reviews);
 

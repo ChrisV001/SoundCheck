@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,24 +68,24 @@ public class ExhaustSystemServiceImpl implements ExhaustSystemService {
     }
 
     @Override
-    public Response createExhaustSystem(String name, String type, String material, String soundProfile, String performanceMetrics, Set<CarModel> carModels, List<Review> reviews) {
+    public Response createExhaustSystem(ExhaustSystemDTO exhaustSystemDTO) {
         Response response = new Response();
 
         try {
             ExhaustSystem exhaustSystem = new ExhaustSystem();
 
-            exhaustSystem.setName(name);
-            exhaustSystem.setType(type);
-            exhaustSystem.setMaterial(material);
-            exhaustSystem.setSoundProfile(soundProfile);
-            exhaustSystem.setPerformanceMetrics(performanceMetrics);
-            exhaustSystem.setCarModels(carModels);
-            exhaustSystem.setReviews(reviews);
+            exhaustSystem.setName(exhaustSystemDTO.getName());
+            exhaustSystem.setType(exhaustSystemDTO.getType());
+            exhaustSystem.setMaterial(exhaustSystemDTO.getMaterial());
+            exhaustSystem.setSoundProfile(exhaustSystemDTO.getSoundProfile());
+            exhaustSystem.setPerformanceMetrics(exhaustSystemDTO.getPerformanceMetrics());
+            exhaustSystem.setCarModels(Utils.mapCarModelSetToCarModelDTOSet(exhaustSystemDTO.getCarModels()));
+            exhaustSystem.setReviews(Utils.mapReviewDTOListToReviewList(exhaustSystemDTO.getReviews()));
 
             ExhaustSystem savedExhaustSystem = exhaustSystemRepository.save(exhaustSystem);
-            ExhaustSystemDTO exhaustSystemDTO = Utils.mapExhaustSystemToExhaustSystemDTO(savedExhaustSystem);
+            ExhaustSystemDTO exhaustSystemDTOSaved = Utils.mapExhaustSystemToExhaustSystemDTO(savedExhaustSystem);
 
-            response.setExhaustSystemDTO(exhaustSystemDTO);
+            response.setExhaustSystemDTO(exhaustSystemDTOSaved);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {
