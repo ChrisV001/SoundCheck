@@ -149,8 +149,12 @@ public class Utils {
         return carModels.stream().map(Utils::mapCarModelToCarModelDTO).collect(Collectors.toList());
     }
 
-    public static List<ExhaustSystemDTO> mapExhaustSystemListToExhaustSystemDTOList(List<ExhaustSystem> exhaustSystems) {
-        return exhaustSystems.stream().map(Utils::mapExhaustSystemToExhaustSystemDTO).collect(Collectors.toList());
+    public static Set<ExhaustSystemDTO> mapExhaustSystemListToExhaustSystemDTOList(Set<ExhaustSystem> exhaustSystems) {
+        return exhaustSystems.stream().map(Utils::mapExhaustSystemToExhaustSystemDTO).collect(Collectors.toSet());
+    }
+
+    public static Set<ExhaustSystem> mapExhaustSystemDTOSetToExhaustSystemSet(Set<ExhaustSystemDTO> exhaustSystemDTOS) {
+        return exhaustSystemDTOS.stream().map(Utils::mapExhaustSystemDTOToExhaustSystem).collect(Collectors.toSet());
     }
 
     public static List<ReviewDTO> mapReviewListToReviewDTOList(List<Review> reviews) {

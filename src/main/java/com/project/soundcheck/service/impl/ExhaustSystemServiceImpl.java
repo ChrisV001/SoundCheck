@@ -12,6 +12,7 @@ import com.project.soundcheck.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,11 +28,11 @@ public class ExhaustSystemServiceImpl implements ExhaustSystemService {
         Response response = new Response();
 
         try {
-            List<ExhaustSystem> exhaustSystems = exhaustSystemRepository.findAll();
+            Set<ExhaustSystem> exhaustSystems = new HashSet<>(exhaustSystemRepository.findAll());
 
-            List<ExhaustSystemDTO> exhaustSystemDTOS = Utils.mapExhaustSystemListToExhaustSystemDTOList(exhaustSystems);
+            Set<ExhaustSystemDTO> exhaustSystemDTOS = Utils.mapExhaustSystemListToExhaustSystemDTOList(exhaustSystems);
 
-            response.setExhaustSystemList(exhaustSystemDTOS);
+            response.setExhaustSystemList((List<ExhaustSystemDTO>) exhaustSystemDTOS);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {
@@ -175,11 +176,11 @@ public class ExhaustSystemServiceImpl implements ExhaustSystemService {
         Response response = new Response();
 
         try {
-            List<ExhaustSystem> exhaustSystem = exhaustSystemRepository.findByType(type);
+            Set<ExhaustSystem> exhaustSystem = new HashSet<>(exhaustSystemRepository.findByType(type));
 
-            List<ExhaustSystemDTO> exhaustSystemDTOS = Utils.mapExhaustSystemListToExhaustSystemDTOList(exhaustSystem);
+            Set<ExhaustSystemDTO> exhaustSystemDTOS = Utils.mapExhaustSystemListToExhaustSystemDTOList(exhaustSystem);
 
-            response.setExhaustSystemList(exhaustSystemDTOS);
+            response.setExhaustSystemList((List<ExhaustSystemDTO>) exhaustSystemDTOS);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {

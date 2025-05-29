@@ -1,5 +1,6 @@
 package com.project.soundcheck.controller;
 
+import com.project.soundcheck.dto.CarModelDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.model.ExhaustSystem;
 import com.project.soundcheck.service.CarModelService;
@@ -34,12 +35,9 @@ public class CarModelController {
 
     @PostMapping("/add")
     public ResponseEntity<Response> createCarModel(
-            @RequestParam String model,
-            @RequestParam Integer year,
-            @RequestParam String engineType,
-            @RequestBody(required = false) Set<ExhaustSystem> exhaustSystems
-    ) {
-        Response response = carModelService.createCarModel(model, year, engineType, exhaustSystems);
+            @RequestBody CarModelDTO carModelDTO
+            ) {
+        Response response = carModelService.createCarModel(carModelDTO);
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }
@@ -47,12 +45,9 @@ public class CarModelController {
     @PutMapping("/edit/{id}")
     public ResponseEntity<Response> updateCarModel(
             @PathVariable Long id,
-            @RequestParam(required = false) String model,
-            @RequestParam(required = false) Integer year,
-            @RequestParam(required = false) String engineType,
-            @RequestParam(required = false) Set<ExhaustSystem> exhaustSystems
+            @RequestBody CarModelDTO carModelDTO
     ) {
-        Response response = carModelService.updateCarModel(id, model, year, engineType, exhaustSystems);
+        Response response = carModelService.updateCarModel(id, carModelDTO);
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }

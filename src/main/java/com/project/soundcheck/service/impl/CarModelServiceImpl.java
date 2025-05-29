@@ -6,6 +6,7 @@ import com.project.soundcheck.exceptions.CustomException;
 import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.model.ExhaustSystem;
 import com.project.soundcheck.repo.CarModelRepository;
+import com.project.soundcheck.repo.ExhaustSystemRepository;
 import com.project.soundcheck.service.CarModelService;
 import com.project.soundcheck.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 public class CarModelServiceImpl implements CarModelService {
 
     private final CarModelRepository carModelRepository;
+
+    private final ExhaustSystemRepository exhaustSystemRepository;
 
     @Override
     public Response getAllCarModels() {
@@ -68,21 +71,21 @@ public class CarModelServiceImpl implements CarModelService {
     }
 
     @Override
-    public Response createCarModel(String model, Integer year, String engineType, Set<ExhaustSystem> exhaustSystems) {
+    public Response createCarModel(CarModelDTO carModelDTO) {
         Response response = new Response();
 
         try {
             CarModel carModel = new CarModel();
 
-            carModel.setModel(model);
-            carModel.setYear(year);
-            carModel.setEngineType(engineType);
-            carModel.setExhaustSystems(exhaustSystems);
+            carModel.setModel(carModelDTO.getModel());
+            carModel.setYear(carModelDTO.getYear());
+            carModel.setEngineType(carModelDTO.getEngineType());
+            carModel.setExhaustSystems(Utils.mapExhaustSystemDTOSetToExhaustSystemSet(carModelDTO.getExhaustSystems()));
             CarModel savedCarModel = carModelRepository.save(carModel);
 
-            CarModelDTO carModelDTO = Utils.mapCarModelToCarModelDTO(savedCarModel);
+            CarModelDTO carModelDTOSaved = Utils.mapCarModelToCarModelDTO(savedCarModel);
 
-            response.setCarModelDTO(carModelDTO);
+            response.setCarModelDTO(carModelDTOSaved);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {
@@ -96,29 +99,35 @@ public class CarModelServiceImpl implements CarModelService {
     }
 
     @Override
-    public Response updateCarModel(Long id, String model, Integer year, String engineType, Set<ExhaustSystem> exhaustSystems) {
+    public Response updateCarModel(Long id, CarModelDTO carModelDTO) {
         Response response = new Response();
 
         try {
             CarModel carModel = carModelRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Car model not found."));
 
-            if (model != null)
-                carModel.setModel(model);
+            if (carModelDTO.getModel() != null)
+                carModel.setModel(carModelDTO.getModel());
 
-            if (year != null)
-                carModel.setYear(year);
+            if (carModelDTO.getYear() != null)
+                carModel.setYear(carModelDTO.getYear());
 
-            if (engineType != null)
-                carModel.setEngineType(engineType);
+            if (carModelDTO.getEngineType() != null)
+                carModel.setEngineType(carModelDTO.getEngineType());
 
-            if (exhaustSystems != null)
+            if (carModelDTO.getExhaustSystems() != null) {
+                Set<ExhaustSystem> exhaustSystems = carModelDTO.getExhaustSystems().stream()
+                        .map(es -> exhaustSystemRepository.findById(es.getId())
+                                .orElseThrow(() -> new CustomException("ExhaustSystem not found: " + es.getId())))
+                        .collect(Collectors.toSet());
                 carModel.setExhaustSystems(exhaustSystems);
+            }
+
 
             CarModel updateCarModel = carModelRepository.save(carModel);
-            CarModelDTO carModelDTO = Utils.mapCarModelToCarModelDTO(updateCarModel);
+            CarModelDTO carModelDTOSaved = Utils.mapCarModelToCarModelDTO(updateCarModel);
 
-            response.setCarModelDTO(carModelDTO);
+            response.setCarModelDTO(carModelDTOSaved);
             response.setStatusCode(200);
             response.setMessage("Successful");
         } catch (CustomException e) {
