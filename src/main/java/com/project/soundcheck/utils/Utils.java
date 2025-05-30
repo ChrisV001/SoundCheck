@@ -166,10 +166,15 @@ public class Utils {
     }
 
     public static Set<CarModel> mapCarModelSetToCarModelDTOSet(Set<CarModelDTO> carModelDTOS) {
+        if (carModelDTOS == null)
+            return Collections.emptySet();
+
         return carModelDTOS.stream().map(Utils::mapCarModelDTOToCarModel).collect(Collectors.toSet());
     }
 
     public static List<Review> mapReviewDTOListToReviewList(List<ReviewDTO> reviewDTOS) {
+        if (reviewDTOS == null)
+            return Collections.emptyList();
         return reviewDTOS.stream().map(Utils::mapReviewDTOToReview).collect(Collectors.toList());
     }
 }

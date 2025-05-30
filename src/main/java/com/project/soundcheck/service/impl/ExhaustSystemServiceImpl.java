@@ -3,9 +3,7 @@ package com.project.soundcheck.service.impl;
 import com.project.soundcheck.dto.ExhaustSystemDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.exceptions.CustomException;
-import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.model.ExhaustSystem;
-import com.project.soundcheck.model.Review;
 import com.project.soundcheck.repo.ExhaustSystemRepository;
 import com.project.soundcheck.service.ExhaustSystemService;
 import com.project.soundcheck.utils.Utils;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
