@@ -40,7 +40,8 @@ public class ArticleServiceImpl implements ArticleService {
             response.setStatusCode(404);
             response.setMessage(e.getMessage());
         } catch (Exception e) {
-            response.setStatusCode(404);
+            e.printStackTrace();
+            response.setStatusCode(500);
             response.setMessage("Error getting all the articles " + e.getMessage());
         }
         return response;

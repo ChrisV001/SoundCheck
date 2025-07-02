@@ -3,22 +3,28 @@ package com.project.soundcheck.service.impl;
 import com.project.soundcheck.dto.ExhaustSystemDTO;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.exceptions.CustomException;
+import com.project.soundcheck.model.CarModel;
 import com.project.soundcheck.model.ExhaustSystem;
+import com.project.soundcheck.repo.CarModelRepository;
 import com.project.soundcheck.repo.ExhaustSystemRepository;
 import com.project.soundcheck.service.ExhaustSystemService;
 import com.project.soundcheck.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ExhaustSystemServiceImpl implements ExhaustSystemService {
 
     private final ExhaustSystemRepository exhaustSystemRepository;
+
+    private final CarModelRepository carModelRepository;
 
     @Override
     public Response getAllExhaustSystems() {
@@ -77,7 +83,16 @@ public class ExhaustSystemServiceImpl implements ExhaustSystemService {
             exhaustSystem.setMaterial(exhaustSystemDTO.getMaterial());
             exhaustSystem.setSoundProfile(exhaustSystemDTO.getSoundProfile());
             exhaustSystem.setPerformanceMetrics(exhaustSystemDTO.getPerformanceMetrics());
-            exhaustSystem.setCarModels(Utils.mapCarModelSetToCarModelDTOSet(exhaustSystemDTO.getCarModels()));
+
+            Set<CarModel> linkedModels = exhaustSystemDTO.getCarModels() == null ? Collections.emptySet() :
+                    exhaustSystemDTO.getCarModels()
+                            .stream()
+                            .map(exDTO -> carModelRepository.findById(exDTO.getId())
+                                    .orElseThrow(() -> new CustomException("No such car model with id: " + exDTO.getId())))
+                            .collect(Collectors.toSet());
+
+            exhaustSystem.setCarModels(linkedModels);
+
             exhaustSystem.setReviews(Utils.mapReviewDTOListToReviewList(exhaustSystemDTO.getReviews()));
 
             ExhaustSystem savedExhaustSystem = exhaustSystemRepository.save(exhaustSystem);
