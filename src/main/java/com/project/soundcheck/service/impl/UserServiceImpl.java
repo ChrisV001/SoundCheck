@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
                 user.setRole("USER");
 
             if (userRepository.existsByEmail(user.getEmail()))
-                throw new CustomException(String.format("%s already exists",user.getEmail()));
+                throw new CustomException(String.format("%s already exists", user.getEmail()));
 
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             User savedUser = userRepository.save(user);
@@ -80,6 +80,41 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage("Error logging in " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response update(Long id, UserDTO userDTO) {
+        Response response = new Response();
+
+        try {
+            User user = userRepository.findById(id).orElseThrow(() -> new CustomException("User not found."));
+
+            if (userDTO.getEmail() != null)
+                user.setEmail(userDTO.getEmail());
+
+            if (userDTO.getUsername() != null)
+                user.setUsername(userDTO.getUsername());
+
+            if (userDTO.getPassword() != null)
+                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+            if (userDTO.getRole() != null)
+                user.setRole(userDTO.getRole());
+
+            userRepository.save(user);
+            UserDTO userDTO1 = Utils.mapUserToUserDTO(user);
+
+            response.setUserDTO(userDTO1);
+            response.setStatusCode(200);
+            response.setMessage("Successful");
+        } catch (CustomException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Error updating user: " + e.getMessage());
         }
         return response;
     }

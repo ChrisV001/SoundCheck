@@ -2,6 +2,7 @@ package com.project.soundcheck.controller;
 
 import com.project.soundcheck.dto.LoginRequest;
 import com.project.soundcheck.dto.Response;
+import com.project.soundcheck.dto.UserDTO;
 import com.project.soundcheck.model.User;
 import com.project.soundcheck.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,13 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Response> register(@RequestBody User user) {
         Response response = userService.register(user);
+        return ResponseEntity.status(response.getStatusCode())
+                .body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response> edit(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        Response response = userService.update(id, userDTO);
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }
