@@ -10,6 +10,7 @@ import com.project.soundcheck.service.UserService;
 import com.project.soundcheck.utils.JWTUtils;
 import com.project.soundcheck.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -85,6 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public Response update(Long id, UserDTO userDTO) {
         Response response = new Response();
 
