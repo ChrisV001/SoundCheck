@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,10 +22,12 @@ public class Review {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "exhaust_id")
+    @JoinColumn(name = "exhaust_id", nullable = false)
     private ExhaustSystem exhaustSystem;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

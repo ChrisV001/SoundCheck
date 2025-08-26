@@ -15,7 +15,7 @@ public class ReviewDTO {
 
     private ExhaustSystemDTO exhaustSystem;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     private UserDTO userDTO;
 }

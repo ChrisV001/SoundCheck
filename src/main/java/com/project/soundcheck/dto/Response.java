@@ -29,6 +29,8 @@ public class Response {
 
     private UserDTO userDTO;
 
+    private CommentDTO commentDTO;
+
     private List<ArticleDTO> articleList;
 
     private List<CarModelDTO> carModelList;
@@ -38,4 +40,6 @@ public class Response {
     private List<ReviewDTO> reviewList;
 
     private List<UserDTO> userList;
+
+    private List<CommentDTO> commentList;
 }

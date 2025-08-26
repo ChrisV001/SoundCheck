@@ -8,6 +8,32 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
+    public static CommentDTO mapCommentToCommentDTO(Comment comment) {
+        CommentDTO commentDTO = new CommentDTO();
+
+        commentDTO.setId(comment.getId());
+        commentDTO.setUpdatedAt(commentDTO.getUpdatedAt());
+        commentDTO.setUserDTO(Utils.mapUserToUserDTO(comment.getUser()));
+        commentDTO.setArticleDTO(Utils.mapArticleToArticleDTO(comment.getArticle()));
+        commentDTO.setCreatedAt(comment.getCreatedAt());
+        commentDTO.setContent(commentDTO.getContent());
+
+        return commentDTO;
+    }
+
+    public static Comment mapCommentDTOToComment(CommentDTO commentDTO) {
+        Comment comment = new Comment();
+
+        comment.setId(commentDTO.getId());
+        comment.setUser(Utils.mapUserDTOToUser(commentDTO.getUserDTO()));
+        comment.setContent(commentDTO.getContent());
+        comment.setUpdatedAt(commentDTO.getUpdatedAt());
+        comment.setCreatedAt(commentDTO.getCreatedAt());
+        comment.setArticle(Utils.mapArticleDTOtoArticle(commentDTO.getArticleDTO()));
+
+        return comment;
+    }
+
     public static ArticleDTO mapArticleToArticleDTO(Article article) {
         ArticleDTO articleDTO = new ArticleDTO();
 
@@ -166,6 +192,18 @@ public class Utils {
         if (articles == null)
             return Collections.emptyList();
         return articles.stream().map(Utils::mapArticleToArticleDTO).collect(Collectors.toList());
+    }
+
+    public static List<CommentDTO> mapCommentListToCommentDTOList(List<Comment> comments) {
+        if (comments == null)
+            return Collections.emptyList();
+        return comments.stream().map(Utils::mapCommentToCommentDTO).collect(Collectors.toList());
+    }
+
+    public static List<Comment> mapCommentDTOListToCommentList(List<CommentDTO> commentDTOS) {
+        if (commentDTOS == null)
+            return Collections.emptyList();
+        return commentDTOS.stream().map(Utils::mapCommentDTOToComment).collect(Collectors.toList());
     }
 
     public static List<CarModelDTO> mapCarModelListToCarModelDTOList(List<CarModel> carModels) {
