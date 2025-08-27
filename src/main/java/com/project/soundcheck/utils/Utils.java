@@ -16,7 +16,7 @@ public class Utils {
         commentDTO.setUserDTO(Utils.mapUserToUserDTO(comment.getUser()));
         commentDTO.setArticleDTO(Utils.mapArticleToArticleDTO(comment.getArticle()));
         commentDTO.setCreatedAt(comment.getCreatedAt());
-        commentDTO.setContent(commentDTO.getContent());
+        commentDTO.setContent(comment.getContent());
 
         return commentDTO;
     }
