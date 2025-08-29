@@ -42,4 +42,15 @@ public class Response {
     private List<UserDTO> userList;
 
     private List<CommentDTO> commentList;
+
+    // Counts / averages
+    private long count;
+    private double average;
+
+    // Pagination metadata
+    private Integer page;
+    private Integer size;
+    private Long totalElements;
+    private Integer totalPages;
+    private Boolean hasNext;
 }

@@ -49,4 +49,13 @@ public class CommentController {
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }
+
+    @GetMapping("/articles/{articleId}/comments")
+    public ResponseEntity<Response> listPaged(@PathVariable Long articleId,
+                                              @RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "5") int size) {
+        Response response = commentService.listByArticlePage(articleId, page, size);
+        return ResponseEntity.status(response.getStatusCode())
+                .body(response);
+    }
 }

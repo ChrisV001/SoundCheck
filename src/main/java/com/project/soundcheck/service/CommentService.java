@@ -14,4 +14,6 @@ public interface CommentService {
     Response updateComment(Long commentId, CommentDTO commentDTO);
 
     Response deleteComment(Long commentId);
+
+    Response listByArticlePage(Long articleId, int page, int size);
 }

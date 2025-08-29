@@ -12,6 +12,9 @@ import com.project.soundcheck.repo.UserRepository;
 import com.project.soundcheck.service.CommentService;
 import com.project.soundcheck.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -168,6 +171,33 @@ public class CommentServiceImpl implements CommentService {
         } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage("Error deleting comment: " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response listByArticlePage(Long articleId, int page, int size) {
+        Response response = new Response();
+        try {
+            PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+            Page<Comment> pageDesc = commentRepository.findByArticleIdOrderByCreatedAtDesc(articleId, pageRequest);
+
+            List<CommentDTO> commentDTOS = Utils.mapCommentListToCommentDTOList(pageDesc.getContent());
+
+            response.setCommentList(commentDTOS);
+            response.setStatusCode(200);
+            response.setMessage("Successful");
+            response.setPage(page);
+            response.setSize(size);
+            response.setTotalElements(pageDesc.getTotalElements());
+            response.setTotalPages(pageDesc.getTotalPages());
+            response.setHasNext(pageDesc.hasNext());
+        } catch (CustomException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Error listing by article: " + e.getMessage());
         }
         return response;
     }
