@@ -28,8 +28,13 @@ public class JWTUtils {
     }
 
     public String generateToken(UserDetails userDetails) {
+        com.project.soundcheck.model.User u = (com.project.soundcheck.model.User) userDetails;
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("id", u.getId())
+                .claim("role", u.getRole())
+                .claim("email", u.getEmail())
+                .claim("username", u.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(Key)
