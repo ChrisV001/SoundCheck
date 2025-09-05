@@ -233,5 +233,120 @@ public class ArticleServiceTest {
         verify(articleRepository, never()).save(any(Article.class));
     }
 
+    @Test
+    void updateArticle_success() {
+        // Arrange
+        Article existingArticle = new Article();
+        existingArticle.setId(1L);
+        existingArticle.setTitle("Old Title");
+        existingArticle.setContent("Old Content");
+        existingArticle.setCarModel(carModel);
 
+        // Updated article DTO
+        ArticleDTO updatedArticleDTO = new ArticleDTO();
+        updatedArticleDTO.setTitle("Updated Title");
+        updatedArticleDTO.setContent("Updated Content");
+        updatedArticleDTO.setCarModelDTO(carModelDTO);
+
+        // Article after update
+        Article updatedArticle = new Article();
+        updatedArticle.setId(1L);
+        updatedArticle.setTitle("Updated Title");
+        updatedArticle.setContent("Updated Content");
+        updatedArticle.setCarModel(carModel);
+
+        // Mock repository responses
+        when(articleRepository.findById(1L)).thenReturn(Optional.of(existingArticle));
+        when(carModelRepository.findById(1L)).thenReturn(Optional.of(carModel));
+        when(articleRepository.save(any(Article.class))).thenReturn(updatedArticle);
+
+        // Mock the static Utils method
+        try (MockedStatic<Utils> mockedUtils = mockStatic(Utils.class)) {
+            mockedUtils.when(() -> Utils.mapArticleToArticleDTO(updatedArticle))
+                    .thenReturn(updatedArticleDTO);
+
+            // Act
+            Response response = articleService.updateArticle(1L, updatedArticleDTO);
+
+            // Assert
+            assertThat(response).isNotNull();
+            assertThat(response.getStatusCode()).isEqualTo(200);
+            assertThat(response.getMessage()).isEqualTo("Successful");
+            assertThat(response.getArticleDTO()).isNotNull();
+
+            // Verify the updated content
+            assertThat(response.getArticleDTO().getTitle()).isEqualTo("Updated Title");
+            assertThat(response.getArticleDTO().getContent()).isEqualTo("Updated Content");
+
+            // Verify repository calls and that article was updated with correct values
+            verify(articleRepository).findById(1L);
+            verify(carModelRepository).findById(1L);
+            ArgumentCaptor<Article> articleCaptor = ArgumentCaptor.forClass(Article.class);
+            verify(articleRepository).save(articleCaptor.capture());
+            
+            Article savedArticle = articleCaptor.getValue();
+            assertThat(savedArticle.getTitle()).isEqualTo("Updated Title");
+            assertThat(savedArticle.getContent()).isEqualTo("Updated Content");
+            assertThat(savedArticle.getId()).isEqualTo(1L);
+            
+            mockedUtils.verify(() -> Utils.mapArticleToArticleDTO(updatedArticle), times(1));
+        }
+    }
+
+    @Test
+    void deleteArticle_success() {
+        // Arrange
+        Article articleToDelete = new Article();
+        articleToDelete.setId(1L);
+        articleToDelete.setTitle("Article to Delete");
+        articleToDelete.setContent("Content to Delete");
+        
+        when(articleRepository.findById(1L)).thenReturn(Optional.of(articleToDelete));
+        doNothing().when(articleRepository).deleteById(1L);
+
+        // Act
+        Response response = articleService.deleteArticle(1L);
+
+        // Assert
+        assertThat(response)
+            .isNotNull()
+            .satisfies(r -> {
+                assertThat(r.getStatusCode()).isEqualTo(200);
+                assertThat(r.getMessage()).isEqualTo("Successful");
+                assertThat(r.getArticleDTO()).isNull();
+            });
+
+        // Verify that the article was found and deleted
+        verify(articleRepository).findById(1L);
+        verify(articleRepository).deleteById(1L);
+        
+        // Verify no other interactions with the repository
+        verifyNoMoreInteractions(articleRepository);
+    }
+
+    @Test
+    void deleteArticle_notFound() {
+        // Arrange
+        Long nonExistentArticleId = 999L;
+        when(articleRepository.findById(nonExistentArticleId)).thenReturn(Optional.empty());
+
+        // Act
+        Response response = articleService.deleteArticle(nonExistentArticleId);
+
+        // Assert
+        assertThat(response)
+            .isNotNull()
+            .satisfies(r -> {
+                assertThat(r.getStatusCode()).isEqualTo(404);
+                assertThat(r.getMessage()).contains("not found");
+                assertThat(r.getArticleDTO()).isNull();
+            });
+
+        // Verify that we only tried to find the article but didn't delete anything
+        verify(articleRepository).findById(nonExistentArticleId);
+        verify(articleRepository, never()).delete(any(Article.class));
+        
+        // Verify no other interactions with the repository
+        verifyNoMoreInteractions(articleRepository);
+    }
 }
