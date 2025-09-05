@@ -78,7 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = new Article();
 
             CarModel carModel = carModelRepository.findById(articleDTO.getCarModelDTO().getId())
-                            .orElseThrow(() -> new CustomException("Car Model not found"));
+                    .orElseThrow(() -> new CustomException("Car Model not found"));
 
             article.setTitle(articleDTO.getTitle());
             article.setContent(articleDTO.getContent());
@@ -110,8 +110,11 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = articleRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Article not found."));
 
-            CarModel carModel = carModelRepository.findById(id)
-                    .orElseThrow(() -> new CustomException("Car Model not found"));
+            if (articleDTO.getCarModelDTO() != null) {
+                CarModel carModel = carModelRepository.findById(articleDTO.getCarModelDTO().getId())
+                        .orElseThrow(() -> new CustomException("Car Model not found"));
+                article.setCarModel(carModel);
+            }
 
             if (articleDTO.getTitle() != null)
                 article.setTitle(articleDTO.getTitle());
