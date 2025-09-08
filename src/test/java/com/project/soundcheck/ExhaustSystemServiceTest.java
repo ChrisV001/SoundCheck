@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +17,8 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -54,6 +57,9 @@ public class ExhaustSystemServiceTest {
 
     @InjectMocks
     private ExhaustSystemServiceImpl exhaustSystemServiceImpl;
+
+    @Captor
+    private ArgumentCaptor<ExhaustSystem> exhaustSystemCaptor;
 
     private ExhaustSystemDTO exhaustSystemDTO;
     private ExhaustSystem exhaustSystem;
@@ -200,6 +206,59 @@ public class ExhaustSystemServiceTest {
             verify(carModelRepository, times(1)).findById(1L);
             verify(exhaustSystemRepository, times(1)).save(any(ExhaustSystem.class));
             mockedUtils.verify(() -> Utils.mapExhaustSystemToExhaustSystemDTO(exhaustSystem), times(1));
+        }
+    }
+
+    @Test
+    void updateExhaustSystem_return200() {
+        // Arrange
+        ExhaustSystem updatedExhaustSystem = new ExhaustSystem();
+        updatedExhaustSystem.setId(1L);
+        updatedExhaustSystem.setCarModels(Collections.singleton(carModel));
+        updatedExhaustSystem.setMaterial("Steel");
+        updatedExhaustSystem.setName("Remus");
+        updatedExhaustSystem.setPerformanceMetrics("performance");
+        updatedExhaustSystem.setType("muffler");
+        updatedExhaustSystem.setSoundProfile("normal");
+
+        ExhaustSystemDTO updatedExhaustSystemDTO = new ExhaustSystemDTO();
+        updatedExhaustSystemDTO.setId(1L);
+        updatedExhaustSystemDTO.setCarModels(Collections.singleton(carModelDTO));
+        updatedExhaustSystemDTO.setMaterial("Steel");
+        updatedExhaustSystemDTO.setName("Remus");
+        updatedExhaustSystemDTO.setPerformanceMetrics("performance");
+        updatedExhaustSystemDTO.setType("muffler");
+        updatedExhaustSystemDTO.setSoundProfile("normal");
+
+        when(exhaustSystemRepository.findById(1L)).thenReturn(Optional.of(exhaustSystem));
+        when(exhaustSystemRepository.save(any(ExhaustSystem.class))).thenReturn(updatedExhaustSystem);
+
+        try (MockedStatic<Utils> mockedUtils = mockStatic(Utils.class)) {
+            mockedUtils.when(() -> Utils.mapExhaustSystemToExhaustSystemDTO(updatedExhaustSystem))
+                .thenReturn(updatedExhaustSystemDTO);
+            
+            // Act
+            Response response = exhaustSystemServiceImpl.updateExhaustSystem(1L, updatedExhaustSystemDTO);
+
+            // Assert
+            assertThat(response).isNotNull();
+            assertThat(response.getStatusCode()).isEqualTo(200);
+            assertThat(response.getMessage()).isEqualTo("Successful");
+            assertThat(response.getExhaustSystemDTO()).isNotNull();
+
+            // Verify the exact object being saved
+            verify(exhaustSystemRepository).save(exhaustSystemCaptor.capture());
+            ExhaustSystem capturedExhaustSystem = exhaustSystemCaptor.getValue();
+            
+            assertThat(capturedExhaustSystem.getName()).isEqualTo("Remus");
+            assertThat(capturedExhaustSystem.getMaterial()).isEqualTo("Steel");
+            assertThat(capturedExhaustSystem.getType()).isEqualTo("muffler");
+            assertThat(capturedExhaustSystem.getCarModels()).isEqualTo(Collections.singleton(carModel));
+
+            // Verify repository calls
+            verify(exhaustSystemRepository).findById(1L);
+            verify(exhaustSystemRepository).save(any(ExhaustSystem.class));
+            mockedUtils.verify(() -> Utils.mapExhaustSystemToExhaustSystemDTO(updatedExhaustSystem), times(1));
         }
     }
 }
