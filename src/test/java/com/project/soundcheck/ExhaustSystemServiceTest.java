@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -260,5 +263,34 @@ public class ExhaustSystemServiceTest {
             verify(exhaustSystemRepository).save(any(ExhaustSystem.class));
             mockedUtils.verify(() -> Utils.mapExhaustSystemToExhaustSystemDTO(updatedExhaustSystem), times(1));
         }
+    }
+
+    @Test
+    void deleteExhaustSystem_return200() {
+        // Arrange
+        ExhaustSystem exhaustSystemToDelete = new ExhaustSystem();
+        exhaustSystemToDelete.setId(2L);
+        exhaustSystemToDelete.setName("Mercedes-Benz");
+        exhaustSystemToDelete.setMaterial("Steel");
+
+        when(exhaustSystemRepository.findById(2L)).thenReturn(Optional.of(exhaustSystemToDelete));
+        doNothing().when(exhaustSystemRepository).delete(any(ExhaustSystem.class));
+
+        // Act
+        Response response = exhaustSystemServiceImpl.deleteExhaustSystem(2L);
+
+        // Assert
+        assertThat(response)
+            .isNotNull()
+            .satisfies(r -> {
+                assertThat(r.getStatusCode()).isEqualTo(200);
+                assertThat(r.getMessage()).isEqualTo("Successful");
+                assertThat(r.getExhaustSystemDTO()).isNull();
+            });
+        
+        verify(exhaustSystemRepository).findById(2L);
+        verify(exhaustSystemRepository).delete(exhaustSystemToDelete);
+
+        verifyNoMoreInteractions(exhaustSystemRepository);
     }
 }
