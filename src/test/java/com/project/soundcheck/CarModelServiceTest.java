@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -197,5 +199,32 @@ public class CarModelServiceTest {
             verify(carModelRepository).save(any(CarModel.class));
             mockedUtils.verify(() -> Utils.mapCarModelToCarModelDTO(updatedCarModel));
         }
+    }
+
+    @Test
+    void deleteCarModel_return200() {
+        CarModel carModelToDelete = new CarModel();
+        carModelToDelete.setId(2L);
+        carModelToDelete.setEngineType("EngineType");
+        carModelToDelete.setModel("Model To Delete");
+
+        when(carModelRepository.findById(2L)).thenReturn(Optional.of(carModelToDelete));
+        doNothing().when(carModelRepository).delete(any(CarModel.class));
+
+        Response response = carModelService.deleteCarModel(2L);
+
+        // Assert
+        assertThat(response)
+            .isNotNull()
+            .satisfies(r -> {
+                assertThat(r.getStatusCode()).isEqualTo(200);
+                assertThat(r.getMessage()).isEqualTo("Successful");
+                assertThat(r.getCarModelDTO()).isNull();
+            });
+
+        verify(carModelRepository).findById(2L);
+        verify(carModelRepository).delete(carModelToDelete);
+
+        verifyNoMoreInteractions(carModelRepository);
     }
 }
