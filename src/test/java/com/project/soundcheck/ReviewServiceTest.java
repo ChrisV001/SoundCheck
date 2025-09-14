@@ -2,6 +2,7 @@ package com.project.soundcheck;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -141,5 +142,31 @@ public class ReviewServiceTest {
             verify(reviewRepository, times(1)).save(any(Review.class));
             mockedUtils.verify(() -> Utils.mapReviewToReviewDTO(review), times(1));
         }
+    }
+
+    @Test
+    void deleteReview_return200() {
+        Review reviewToDelete = new Review();
+        reviewToDelete.setId(2L);
+        reviewToDelete.setExhaustSystem(exhaustSystem);
+        reviewToDelete.setUser(user);
+
+        when(reviewRepository.findById(2L)).thenReturn(Optional.of(reviewToDelete));
+        doNothing().when(reviewRepository).delete(any(Review.class));
+
+        Response response = reviewServiceImpl.deleteReview(reviewToDelete.getId());
+
+        assertThat(response)
+            .isNotNull()
+            .satisfies(r -> {
+                assertThat(r.getStatusCode()).isEqualTo(200);
+                assertThat(r.getMessage()).isEqualTo("Successful");
+                assertThat(r.getReviewDTO()).isNull();
+            });
+
+        verify(reviewRepository).findById(2L);
+        verify(reviewRepository).delete(reviewToDelete);
+
+        verifyNoMoreInteractions(reviewRepository);
     }
 }

@@ -77,10 +77,15 @@ public class CarModelServiceImpl implements CarModelService {
         try {
             CarModel carModel = new CarModel();
 
+            Set<ExhaustSystem> exhaustSystems = carModelDTO.getExhaustSystems().stream()
+                .map(es -> exhaustSystemRepository.findById(es.getId())
+                .orElseThrow(() -> new CustomException("No exhaust systems found.")))
+                .collect(Collectors.toSet());
+
             carModel.setModel(carModelDTO.getModel());
             carModel.setYear(carModelDTO.getYear());
             carModel.setEngineType(carModelDTO.getEngineType());
-            carModel.setExhaustSystems(Utils.mapExhaustSystemDTOSetToExhaustSystemSet(carModelDTO.getExhaustSystems()));
+            carModel.setExhaustSystems(exhaustSystems);
             CarModel savedCarModel = carModelRepository.save(carModel);
 
             CarModelDTO carModelDTOSaved = Utils.mapCarModelToCarModelDTO(savedCarModel);
