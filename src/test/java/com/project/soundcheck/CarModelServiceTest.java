@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,7 +44,6 @@ public class CarModelServiceTest {
     @Mock
     private ExhaustSystemRepository exhaustSystemRepository;
 
-    @InjectMocks
     private CarModelServiceImpl carModelService;
 
     @Captor
@@ -58,6 +56,8 @@ public class CarModelServiceTest {
 
     @BeforeEach
     void setUp() {
+        carModelService = new CarModelServiceImpl(carModelRepository, exhaustSystemRepository);
+
         carModel = new CarModel();
         carModelDTO = new CarModelDTO();
         exhaustSystem = new ExhaustSystem();

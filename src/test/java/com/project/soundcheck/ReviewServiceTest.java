@@ -16,7 +16,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,7 +30,6 @@ import com.project.soundcheck.model.User;
 import com.project.soundcheck.repo.ExhaustSystemRepository;
 import com.project.soundcheck.repo.ReviewRepository;
 import com.project.soundcheck.repo.UserRepository;
-import com.project.soundcheck.service.impl.ExhaustSystemServiceImpl;
 import com.project.soundcheck.service.impl.ReviewServiceImpl;
 import com.project.soundcheck.utils.Utils;
 
@@ -46,7 +44,6 @@ public class ReviewServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks
     private ReviewServiceImpl reviewServiceImpl;
 
     private Review review;
@@ -58,6 +55,8 @@ public class ReviewServiceTest {
 
     @BeforeEach
     void setUp() {
+        reviewServiceImpl = new ReviewServiceImpl(reviewRepository, exhaustSystemRepository, userRepository);
+
         user = new User();
         user.setId(1L);
         user.setEmail("test@test.com");

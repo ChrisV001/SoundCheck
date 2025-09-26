@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -22,11 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 
 import com.project.soundcheck.dto.CarModelDTO;
 import com.project.soundcheck.dto.ExhaustSystemDTO;
@@ -58,7 +55,6 @@ public class ExhaustSystemServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks
     private ExhaustSystemServiceImpl exhaustSystemServiceImpl;
 
     @Captor
@@ -75,6 +71,8 @@ public class ExhaustSystemServiceTest {
 
     @BeforeEach
     void setUp() {
+        exhaustSystemServiceImpl = new ExhaustSystemServiceImpl(exhaustSystemRepository, carModelRepository);
+
         // Initialize all objects
         exhaustSystemDTO = new ExhaustSystemDTO();
         exhaustSystem = new ExhaustSystem();

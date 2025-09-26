@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -51,7 +50,6 @@ public class CommentServiceTest {
     @Mock
     private ArticleRepository articleRepository;
 
-    @InjectMocks
     private CommentServiceImpl commentServiceImpl;
 
     @Captor
@@ -66,6 +64,8 @@ public class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
+        commentServiceImpl = new CommentServiceImpl(commentRepository, userRepository, articleRepository);
+
         // Initialize User and UserDTO
         user = new User();
         user.setId(1L);
