@@ -4,6 +4,8 @@ import com.project.soundcheck.dto.LoginRequest;
 import com.project.soundcheck.dto.Response;
 import com.project.soundcheck.model.User;
 import com.project.soundcheck.service.UserService;
+import com.project.soundcheck.service.VerificationService;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+
+    private final VerificationService verificationService;
+
+    public record SendCodeRequest(String email) {}
+
+    public record ConfirmCodeRequest(String email, String code) {}
 
     @PostMapping("/register")
     public ResponseEntity<Response> register(@RequestBody User user) {
@@ -32,4 +40,17 @@ public class AuthController {
                 .body(response);
     }
 
+    @PostMapping("/verify-email/send")
+    public ResponseEntity<?> sendCode(@RequestBody SendCodeRequest req) {
+        Response response = userService.getMyInfo(req.email());
+        verificationService.sendEmailVerification(response.getUserDTO().getId(), response.getUserDTO().getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-email/confirm")
+    public ResponseEntity<?> confirm(@RequestBody ConfirmCodeRequest req) {
+        Response response = userService.getMyInfo(req.email());
+        boolean ok = verificationService.verifyEmailCode(response.getUserDTO().getId(), response.getUserDTO().getEmail(), req.code());
+        return ok ? ResponseEntity.ok().build() : ResponseEntity.status(400).body("Invalid or expired code");
+    }
 }

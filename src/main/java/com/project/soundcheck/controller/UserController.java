@@ -66,4 +66,12 @@ public class UserController {
         return ResponseEntity.status(response.getStatusCode())
                 .body(response);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<Response> me(@AuthenticationPrincipal com.project.soundcheck.model.User principal) {
+        String email = principal.getEmail();
+        Response response = userService.getMyInfo(email);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
 }
