@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
                 throw new CustomException(String.format("%s already exists", user.getEmail()));
 
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setIsEmailVerified(false);
             User savedUser = userRepository.save(user);
             UserDTO userDTO = Utils.mapUserToUserDTO(savedUser);
 

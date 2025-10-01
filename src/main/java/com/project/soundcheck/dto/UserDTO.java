@@ -1,7 +1,6 @@
 package com.project.soundcheck.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.soundcheck.model.Review;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,6 +17,10 @@ public class UserDTO {
     private String email;
 
     private String password;
+
+    private Boolean isEmailVerified;
+
+    private LocalDateTime emailVerifiedAt;
 
     private String role;
 

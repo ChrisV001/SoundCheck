@@ -114,6 +114,8 @@ public class Utils {
         userDTO.setRole(user.getRole());
         userDTO.setCreatedAt(user.getCreatedAt());
         userDTO.setUpdatedAt(user.getUpdatedAt());
+        userDTO.setIsEmailVerified(user.getIsEmailVerified());
+        userDTO.setEmailVerifiedAt(user.getEmailVerifiedAt());
         userDTO.setReviews(user.getReviews() != null ? user.getReviews().stream().map(Utils::mapReviewToReviewDTO).collect(Collectors.toSet()) : Collections.emptySet());
 
         return userDTO;
@@ -129,6 +131,8 @@ public class Utils {
         user.setRole(userDTO.getRole());
         user.setCreatedAt(userDTO.getCreatedAt());
         user.setUpdatedAt(userDTO.getUpdatedAt());
+        user.setIsEmailVerified(userDTO.getIsEmailVerified());
+        user.setEmailVerifiedAt(userDTO.getEmailVerifiedAt());
         user.setReviews(userDTO.getReviews() != null ? userDTO.getReviews().stream().map(Utils::mapReviewDTOToReview).collect(Collectors.toSet()) : Collections.emptySet());
 
         return user;

@@ -3,6 +3,7 @@ package com.project.soundcheck.service.impl;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
@@ -15,9 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.soundcheck.dto.Response;
+import com.project.soundcheck.exceptions.CustomException;
 import com.project.soundcheck.model.EmailVerificationCode;
+import com.project.soundcheck.model.User;
 import com.project.soundcheck.model.VerificationType;
 import com.project.soundcheck.repo.EmailVerificationCodeRepository;
+import com.project.soundcheck.repo.UserRepository;
 import com.project.soundcheck.service.UserService;
 import com.project.soundcheck.service.VerificationService;
 
@@ -34,6 +38,8 @@ public class VerificationServiceImpl implements VerificationService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserService userService;
+
+    private final UserRepository userRepository;
 
     @Value("${app.verification.ttl-minutes:15}")
     private long ttlMinutes;
@@ -165,6 +171,7 @@ public class VerificationServiceImpl implements VerificationService {
             boolean isValid = verifyEmailCode(userId, email, code);
 
             if (isValid) {
+                markUserAsVerified(userId);
                 response.setStatusCode(200);
                 response.setMessage("Email verified successfully");
             } else {
@@ -176,5 +183,14 @@ public class VerificationServiceImpl implements VerificationService {
             response.setMessage("Verification failed: " + e.getMessage());
         }
         return response;
+    }
+
+    private void markUserAsVerified(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException("User not found"));
+        
+        user.setIsEmailVerified(true);
+        user.setEmailVerifiedAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 }

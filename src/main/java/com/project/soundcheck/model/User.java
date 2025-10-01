@@ -34,6 +34,10 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private String email;
 
+    private Boolean isEmailVerified = false;
+    
+    private LocalDateTime emailVerifiedAt;
+
     @Column(nullable = false)
     private String password;
 
