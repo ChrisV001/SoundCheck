@@ -41,16 +41,16 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email/send")
-    public ResponseEntity<?> sendCode(@RequestBody SendCodeRequest req) {
-        Response response = userService.getMyInfo(req.email());
-        verificationService.sendEmailVerification(response.getUserDTO().getId(), response.getUserDTO().getEmail());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Response> sendCode(@RequestBody SendCodeRequest req) {
+        Response response = verificationService.sendVerificationCode(req.email());
+        return ResponseEntity.status(response.getStatusCode())
+            .body(response);
     }
 
     @PostMapping("/verify-email/confirm")
-    public ResponseEntity<?> confirm(@RequestBody ConfirmCodeRequest req) {
-        Response response = userService.getMyInfo(req.email());
-        boolean ok = verificationService.verifyEmailCode(response.getUserDTO().getId(), response.getUserDTO().getEmail(), req.code());
-        return ok ? ResponseEntity.ok().build() : ResponseEntity.status(400).body("Invalid or expired code");
+    public ResponseEntity<Response> confirm(@RequestBody ConfirmCodeRequest req) {
+        Response response = verificationService.verifyCode(req.email(), req.code());
+        return ResponseEntity.status(response.getStatusCode())
+            .body(response);
     }
 }
